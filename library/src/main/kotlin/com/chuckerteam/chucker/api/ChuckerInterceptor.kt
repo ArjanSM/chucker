@@ -170,20 +170,13 @@ public class ChuckerInterceptor private constructor(
             this.cacheDirectoryProvider = provider
         }
 
+        /**
+         * validates and adds valid paths to the skipPaths.
+         * Request containing valid skip paths will NOT be processes by Chucker
+         */
         public fun skipPaths(skipPaths: List<String>): Builder = apply {
             skipPaths.forEach { candidatePath ->
                 processSkipPaths(candidatePath)
-            }
-        }
-
-        private fun processSkipPaths(candidatePath: String) {
-            if (candidatePath.isNotBlank()) {
-                val nullableHttpUrl = candidatePath.toHttpUrlOrNull()
-                    ?: "http://localhost:8080$candidatePath".toHttpUrlOrNull()
-
-                nullableHttpUrl?.let { validHttpUrl ->
-                            this@Builder.skipPaths.add(validHttpUrl.encodedPath)
-                        }
             }
         }
 
@@ -191,6 +184,17 @@ public class ChuckerInterceptor private constructor(
          * Creates a new [ChuckerInterceptor] instance with values defined in this builder.
          */
         public fun build(): ChuckerInterceptor = ChuckerInterceptor(this)
+
+        private fun processSkipPaths(candidatePath: String) {
+            if (candidatePath.isNotBlank()) {
+                val nullableHttpUrl = candidatePath.toHttpUrlOrNull()
+                    ?: "http://localhost:8080$candidatePath".toHttpUrlOrNull()
+
+                nullableHttpUrl?.let { validHttpUrl ->
+                    this@Builder.skipPaths.add(validHttpUrl.encodedPath)
+                }
+            }
+        }
     }
 
     private companion object {
