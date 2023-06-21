@@ -44,4 +44,10 @@ internal class MainViewModel : ViewModel() {
         }
         NotificationHelper.clearBuffer()
     }
+
+    private val filterCategory = MutableLiveData("")
+    val currentFilterCategory: LiveData<String> = filterCategory
+    fun updateFilterCategory(latestFilterCategoryClicked: String) {
+        filterCategory.value = latestFilterCategoryClicked
+    }
 }

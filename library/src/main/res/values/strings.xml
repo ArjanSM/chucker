@@ -64,4 +64,12 @@
     <string name="chucker_graphql_operation_is_empty"> &lt;Unable to discover GraphQL operation name&gt;</string>
     <string name="chucker_scroll_buttons_for_search">Buttons to scroll the search items</string>
     <string name="chucker_search_results_title">Search Results:</string>
+    <string name="chucker_filters">Filters</string>
+    <string name="chucker_apply">Apply</string>
+    <string name="chucker_scheme">Scheme</string>
+    <string name="chucker_http">http</string>
+    <string name="chucker_https">https</string>
+    <string name="chucker_method_get">GET</string>
+    <string name="chucker_method_post">POST</string>
+    <string name="chucker_method_put">PUT</string>
 </resources>

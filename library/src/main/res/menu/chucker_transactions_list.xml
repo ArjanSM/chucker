@@ -8,6 +8,11 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
     <item
+        android:id="@+id/filters"
+        android:title="@string/chucker_filters"
+        android:icon="@drawable/chucker_ic_filter_alt"
+        app:showAsAction="collapseActionView|ifRoom"/>
+    <item
         android:id="@+id/export"
         android:icon="@drawable/chucker_ic_share_white"
         android:title="@string/chucker_export"

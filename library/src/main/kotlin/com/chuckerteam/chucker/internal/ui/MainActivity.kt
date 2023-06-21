@@ -154,6 +154,10 @@ internal class MainActivity :
                 )
                 true
             }
+            R.id.filters -> {
+                FiltersFragment().show(supportFragmentManager, "FiltersFragment")
+                true
+            }
             R.id.share_text -> {
                 showDialog(
                     getExportDialogData(R.string.chucker_export_text_http_confirmation),
