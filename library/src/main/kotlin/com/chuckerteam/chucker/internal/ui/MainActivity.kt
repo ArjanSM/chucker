@@ -88,7 +88,7 @@ internal class MainActivity :
             }
         }
 
-        viewModel.transactions.observe(
+        viewModel.finalFilteredTransactions.observe(
             this
         ) { transactionTuples ->
             transactionsAdapter.submitList(transactionTuples)

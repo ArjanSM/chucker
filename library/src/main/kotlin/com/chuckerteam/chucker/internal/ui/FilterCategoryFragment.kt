@@ -1,12 +1,11 @@
 package com.chuckerteam.chucker.internal.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFilterCategoryBinding
@@ -15,7 +14,7 @@ internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListe
     private lateinit var filterCategoryViewBinding: ChuckerFragmentFilterCategoryBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var filterCategoryAdapter: FilterCategoryAdapter
-    private val viewModel: MainViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: MainViewModel by activityViewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         filterCategoryAdapter = FilterCategoryAdapter(
@@ -42,9 +41,6 @@ internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListe
         recyclerView = filterCategoryViewBinding.filterCategoryRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this.activity)
         recyclerView.adapter = filterCategoryAdapter
-        viewModel.currentFilterCategory.observe(viewLifecycleOwner) {
-            Log.i("FilterCategoryFragment1", "currentFilterCategory CHANGED!!!!!")
-        }
     }
 
     override fun onFilterCategoryClick(filterCategory: String) {
