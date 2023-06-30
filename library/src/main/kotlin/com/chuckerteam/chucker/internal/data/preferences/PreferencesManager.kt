@@ -3,6 +3,10 @@ package com.chuckerteam.chucker.internal.data.preferences
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import com.chuckerteam.chucker.internal.data.model.FILTERS_PREF
+import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_GET
+import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_POST
+import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_PUT
 import com.chuckerteam.chucker.internal.data.model.FilterByMethodData
 import com.chuckerteam.chucker.internal.data.model.FiltersData
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +17,7 @@ internal object PreferencesManager {
     suspend fun initialize(applicationContext: Context) {
         withContext(Dispatchers.IO) {
             if (sharedPreferences == null) {
-                sharedPreferences = applicationContext.getSharedPreferences("filters", MODE_PRIVATE)
+                sharedPreferences = applicationContext.getSharedPreferences(FILTERS_PREF, MODE_PRIVATE)
             }
         }
     }
@@ -27,9 +31,9 @@ internal object PreferencesManager {
     suspend fun applyFiltersPreference(filtersData: FiltersData): FiltersData {
         return withContext(Dispatchers.IO) {
             preferences().edit().apply {
-                putBoolean("filter_by_category_method_get", filtersData.filterByMethodData.get)
-                putBoolean("filter_by_category_method_put", filtersData.filterByMethodData.put)
-                putBoolean("filter_by_category_method_post", filtersData.filterByMethodData.post)
+                putBoolean(FILTER_CATEGORY_METHOD_GET, filtersData.filterByMethodData.get)
+                putBoolean(FILTER_CATEGORY_METHOD_PUT, filtersData.filterByMethodData.put)
+                putBoolean(FILTER_CATEGORY_METHOD_POST, filtersData.filterByMethodData.post)
                 this.apply()
             }
             getFiltersData()
@@ -38,9 +42,9 @@ internal object PreferencesManager {
 
     suspend fun getFiltersData(): FiltersData {
         return withContext(Dispatchers.IO) {
-            val get = preferences().getBoolean("filter_by_category_method_get", true)
-            val put = preferences().getBoolean("filter_by_category_method_put", true)
-            val post = preferences().getBoolean("filter_by_category_method_post", true)
+            val get = preferences().getBoolean(FILTER_CATEGORY_METHOD_GET, true)
+            val put = preferences().getBoolean(FILTER_CATEGORY_METHOD_PUT, true)
+            val post = preferences().getBoolean(FILTER_CATEGORY_METHOD_POST, true)
             FiltersData(FilterByMethodData(get, post, put))
         }
     }
