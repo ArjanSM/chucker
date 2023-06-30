@@ -9,13 +9,19 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.chuckerteam.chucker.internal.data.entity.HttpTransaction
 import com.chuckerteam.chucker.internal.data.entity.HttpTransactionTuple
-import com.chuckerteam.chucker.internal.data.model.FilterByMethodData
 import com.chuckerteam.chucker.internal.data.model.FiltersData
+import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
 import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import com.chuckerteam.chucker.internal.support.NotificationHelper
 import kotlinx.coroutines.launch
 
 internal class MainViewModel : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            additionalFilters = PreferencesManager.getFiltersData()
+        }
+    }
 
     private val currentFilter = MutableLiveData("")
     private val _filteredTransactions: MutableLiveData<List<HttpTransactionTuple>> = MutableLiveData()
@@ -37,10 +43,6 @@ internal class MainViewModel : ViewModel() {
             }
         }
     }
-
-    val transactions: LiveData<List<HttpTransactionTuple>>
-        get() = _transactions
-
     val finalFilteredTransactions: MediatorLiveData<List<HttpTransactionTuple>> =
         MediatorLiveData<List<HttpTransactionTuple>>().apply {
             addSource(_transactions) { s ->
@@ -57,10 +59,19 @@ internal class MainViewModel : ViewModel() {
     fun applyFilters() {
         _filteredTransactions.value = originalResults.filter { containsFilteredMethod(it.method) }
     }
+
+    fun saveFilters() {
+        viewModelScope.launch {
+            additionalFilters = additionalFilters?.let {
+                PreferencesManager.applyFiltersPreference(filtersData = it)
+            }
+            applyFilters()
+        }
+    }
     private fun containsFilteredMethod(method: String?): Boolean {
-        return (additionalFilters.filterByMethodData.get && method == "GET") ||
-            (additionalFilters.filterByMethodData.post && method == "POST") ||
-            (additionalFilters.filterByMethodData.post && method == "PUT")
+        return (additionalFilters?.filterByMethodData?.get == true && method == "GET") ||
+            (additionalFilters?.filterByMethodData?.post == true && method == "POST") ||
+            (additionalFilters?.filterByMethodData?.put == true && method == "PUT")
     }
 
     suspend fun getAllTransactions(): List<HttpTransaction> = RepositoryProvider.transaction().getAllTransactions()
@@ -82,7 +93,5 @@ internal class MainViewModel : ViewModel() {
         filterCategory.value = latestFilterCategoryClicked
     }
 
-    val additionalFilters = FiltersData(
-        FilterByMethodData()
-    )
+    var additionalFilters: FiltersData? = null
 }

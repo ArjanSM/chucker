@@ -29,7 +29,7 @@ internal class FiltersFragment : BottomSheetDialogFragment() {
         }
         filtersBinding.filtersAccept.setOnClickListener {
             this.dismiss()
-            viewModel.applyFilters()
+            viewModel.saveFilters()
         }
     }
 }
