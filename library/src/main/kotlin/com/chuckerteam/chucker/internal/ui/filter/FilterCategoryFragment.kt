@@ -1,4 +1,4 @@
-package com.chuckerteam.chucker.internal.ui
+package com.chuckerteam.chucker.internal.ui.filter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFilterCategoryBinding
+import com.chuckerteam.chucker.internal.ui.MainViewModel
 
 internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListener {
     private lateinit var filterCategoryViewBinding: ChuckerFragmentFilterCategoryBinding

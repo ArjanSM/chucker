@@ -24,6 +24,7 @@ import com.chuckerteam.chucker.R
 import com.chuckerteam.chucker.databinding.ChuckerActivityMainBinding
 import com.chuckerteam.chucker.internal.data.entity.HttpTransaction
 import com.chuckerteam.chucker.internal.data.model.DialogData
+import com.chuckerteam.chucker.internal.data.preferences.FiltersPreferenceState
 import com.chuckerteam.chucker.internal.support.HarUtils
 import com.chuckerteam.chucker.internal.support.Logger
 import com.chuckerteam.chucker.internal.support.Sharable
@@ -31,6 +32,7 @@ import com.chuckerteam.chucker.internal.support.TransactionDetailsHarSharable
 import com.chuckerteam.chucker.internal.support.TransactionListDetailsSharable
 import com.chuckerteam.chucker.internal.support.shareAsFile
 import com.chuckerteam.chucker.internal.support.showDialog
+import com.chuckerteam.chucker.internal.ui.filter.FiltersFragment
 import com.chuckerteam.chucker.internal.ui.transaction.TransactionActivity
 import com.chuckerteam.chucker.internal.ui.transaction.TransactionAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -46,7 +48,7 @@ internal class MainActivity :
 
     private lateinit var mainBinding: ChuckerActivityMainBinding
     private lateinit var transactionsAdapter: TransactionAdapter
-
+    private lateinit var filtersItem: MenuItem
     private val applicationName: CharSequence
         get() = applicationInfo.loadLabel(packageManager)
 
@@ -131,7 +133,9 @@ internal class MainActivity :
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.chucker_transactions_list, menu)
+        filtersItem = menu.findItem(R.id.filters)
         setUpSearch(menu)
+        observeFiltersState()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -244,6 +248,19 @@ internal class MainActivity :
         positiveButtonText = getString(R.string.chucker_export),
         negativeButtonText = getString(R.string.chucker_cancel)
     )
+
+    private fun observeFiltersState() {
+        viewModel.filtersState.observe(this) {
+            when (it.name) {
+                FiltersPreferenceState.CHANGED.name -> {
+                    filtersItem.setIcon(R.drawable.chucker_ic_filter_alt)
+                }
+                else -> {
+                    filtersItem.setIcon(R.drawable.chucker_ic_filter_alt_off)
+                }
+            }
+        }
+    }
 
     companion object {
         private const val EXPORT_TXT_FILE_NAME = "transactions.txt"

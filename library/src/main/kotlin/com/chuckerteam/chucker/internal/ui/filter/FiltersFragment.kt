@@ -1,4 +1,4 @@
-package com.chuckerteam.chucker.internal.ui
+package com.chuckerteam.chucker.internal.ui.filter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFiltersBinding
+import com.chuckerteam.chucker.internal.ui.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 internal class FiltersFragment : BottomSheetDialogFragment() {

@@ -1,4 +1,4 @@
-package com.chuckerteam.chucker.internal.ui
+package com.chuckerteam.chucker.internal.ui.filter
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import com.chuckerteam.chucker.R
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategoryMethodBinding
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategorySchemeBinding
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFilterCategoryContentBinding
+import com.chuckerteam.chucker.internal.ui.MainViewModel
 
 internal class FilterCategoryContentFragment : Fragment() {
     private lateinit var viewBinding: ChuckerFragmentFilterCategoryContentBinding

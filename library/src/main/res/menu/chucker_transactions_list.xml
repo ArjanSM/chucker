@@ -10,7 +10,7 @@
     <item
         android:id="@+id/filters"
         android:title="@string/chucker_filters"
-        android:icon="@drawable/chucker_ic_filter_alt"
+        android:icon="@drawable/chucker_ic_filter_alt_off"
         app:showAsAction="collapseActionView|ifRoom"/>
     <item
         android:id="@+id/export"

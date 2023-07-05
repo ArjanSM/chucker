@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.chuckerteam.chucker.internal.data.entity.HttpTransaction
 import com.chuckerteam.chucker.internal.data.entity.HttpTransactionTuple
 import com.chuckerteam.chucker.internal.data.model.FiltersData
+import com.chuckerteam.chucker.internal.data.preferences.FiltersPreferenceState
 import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
 import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import com.chuckerteam.chucker.internal.support.NotificationHelper
@@ -20,6 +21,7 @@ internal class MainViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             additionalFilters = PreferencesManager.getFiltersData()
+            filtersState = PreferencesManager.filterPreferencesState
         }
     }
 
@@ -27,6 +29,9 @@ internal class MainViewModel : ViewModel() {
     private val _filteredTransactions: MutableLiveData<List<HttpTransactionTuple>> = MutableLiveData()
     private val filteredTransactions: LiveData<List<HttpTransactionTuple>>
         get() = _filteredTransactions
+
+    private val filterPreferences: LiveData<FiltersData> = PreferencesManager.additionalFiltersPereferences
+
     private lateinit var originalResults: List<HttpTransactionTuple>
     private var _transactions: LiveData<List<HttpTransactionTuple>> = currentFilter.switchMap { searchQuery ->
         with(RepositoryProvider.transaction()) {
@@ -43,6 +48,7 @@ internal class MainViewModel : ViewModel() {
             }
         }
     }
+
     val finalFilteredTransactions: MediatorLiveData<List<HttpTransactionTuple>> =
         MediatorLiveData<List<HttpTransactionTuple>>().apply {
             addSource(_transactions) { s ->
@@ -54,7 +60,13 @@ internal class MainViewModel : ViewModel() {
             addSource(filteredTransactions) {
                 this.value = originalResults.filter { containsFilteredMethod(it.method) }
             }
+            addSource(filterPreferences) {
+                additionalFilters = it
+                applyFilters()
+            }
         }
+
+    lateinit var filtersState: LiveData<FiltersPreferenceState>
 
     fun applyFilters() {
         _filteredTransactions.value = originalResults.filter { containsFilteredMethod(it.method) }
@@ -62,7 +74,7 @@ internal class MainViewModel : ViewModel() {
 
     fun saveFilters() {
         viewModelScope.launch {
-            additionalFilters = additionalFilters?.let {
+            additionalFilters?.let {
                 PreferencesManager.applyFiltersPreference(filtersData = it)
             }
             applyFilters()

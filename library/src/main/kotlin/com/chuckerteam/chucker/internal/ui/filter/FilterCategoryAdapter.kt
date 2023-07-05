@@ -1,4 +1,4 @@
-package com.chuckerteam.chucker.internal.ui
+package com.chuckerteam.chucker.internal.ui.filter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
