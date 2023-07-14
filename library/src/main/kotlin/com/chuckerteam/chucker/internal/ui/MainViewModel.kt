@@ -30,9 +30,9 @@ internal class MainViewModel : ViewModel() {
     private val filteredTransactions: LiveData<List<HttpTransactionTuple>>
         get() = _filteredTransactions
 
-    private val filterPreferences: LiveData<FiltersData> = PreferencesManager.additionalFiltersPereferences
+    private val filterPreferences: LiveData<FiltersData> = PreferencesManager.additionalFiltersPreferences
 
-    private lateinit var originalResults: List<HttpTransactionTuple>
+    private var originalResults: List<HttpTransactionTuple> = emptyList()
     private var _transactions: LiveData<List<HttpTransactionTuple>> = currentFilter.switchMap { searchQuery ->
         with(RepositoryProvider.transaction()) {
             when {
@@ -58,7 +58,9 @@ internal class MainViewModel : ViewModel() {
                 applyFilters()
             }
             addSource(filteredTransactions) {
-                this.value = originalResults.filter { containsFilteredMethod(it.method) }
+                this.value = originalResults.filter {
+                    containsFilteredMethod(it.method) && containsFilteredScheme(it.scheme)
+                }
             }
             addSource(filterPreferences) {
                 additionalFilters = it
@@ -68,8 +70,10 @@ internal class MainViewModel : ViewModel() {
 
     lateinit var filtersState: LiveData<FiltersPreferenceState>
 
-    fun applyFilters() {
-        _filteredTransactions.value = originalResults.filter { containsFilteredMethod(it.method) }
+    private fun applyFilters() {
+        _filteredTransactions.value = originalResults.filter {
+            containsFilteredMethod(it.method) && containsFilteredScheme(it.scheme)
+        }
     }
 
     fun saveFilters() {
@@ -84,6 +88,11 @@ internal class MainViewModel : ViewModel() {
         return (additionalFilters?.filterByMethodData?.get == true && method == "GET") ||
             (additionalFilters?.filterByMethodData?.post == true && method == "POST") ||
             (additionalFilters?.filterByMethodData?.put == true && method == "PUT")
+    }
+
+    private fun containsFilteredScheme(scheme: String?): Boolean {
+        return (additionalFilters?.filterByScheme?.https == true && scheme == "https") ||
+            (additionalFilters?.filterByScheme?.http == true && scheme == "http")
     }
 
     suspend fun getAllTransactions(): List<HttpTransaction> = RepositoryProvider.transaction().getAllTransactions()

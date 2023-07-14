@@ -9,16 +9,19 @@ import com.chuckerteam.chucker.internal.data.model.FILTERS_PREF
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_GET
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_POST
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_PUT
+import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_SCHEME_HTTP
+import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_SCHEME_HTTPS
 import com.chuckerteam.chucker.internal.data.model.FilterByMethodData
+import com.chuckerteam.chucker.internal.data.model.FilterByScheme
 import com.chuckerteam.chucker.internal.data.model.FiltersData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 internal object PreferencesManager {
     private var sharedPreferences: SharedPreferences? = null
-    private val _filterByMehod: MutableLiveData<FiltersData> = MutableLiveData<FiltersData>()
-    val additionalFiltersPereferences: LiveData<FiltersData>
-        get() = _filterByMehod
+    private val _filterByMethod: MutableLiveData<FiltersData> = MutableLiveData<FiltersData>()
+    val additionalFiltersPreferences: LiveData<FiltersData>
+        get() = _filterByMethod
 
     private val _filterPreferenceState: MutableLiveData<FiltersPreferenceState> =
         MutableLiveData()
@@ -33,7 +36,7 @@ internal object PreferencesManager {
         }
     }
 
-    fun preferences(): SharedPreferences {
+    private fun preferences(): SharedPreferences {
         return checkNotNull(sharedPreferences) {
             "You cannot access sharedPreferences if you don't initialize it"
         }
@@ -45,33 +48,43 @@ internal object PreferencesManager {
                 putBoolean(FILTER_CATEGORY_METHOD_GET, filtersData.filterByMethodData.get)
                 putBoolean(FILTER_CATEGORY_METHOD_PUT, filtersData.filterByMethodData.put)
                 putBoolean(FILTER_CATEGORY_METHOD_POST, filtersData.filterByMethodData.post)
+                // filters by scheme
+                putBoolean(FILTER_CATEGORY_SCHEME_HTTPS, filtersData.filterByScheme.https)
+                putBoolean(FILTER_CATEGORY_SCHEME_HTTP, filtersData.filterByScheme.http)
                 this.apply()
             }
             val updatedFilters = getFiltersData()
-            _filterByMehod.postValue(updatedFilters)
+            _filterByMethod.postValue(updatedFilters)
         }
     }
 
     suspend fun getFiltersData(): FiltersData {
         return withContext(Dispatchers.IO) {
             val filtersByMethod = getFiltersByMethod()
-            FiltersData(filtersByMethod).also {
+            val filterByScheme = getFiltersByScheme()
+            FiltersData(filtersByMethod, filterByScheme).also {
                 checkFilterPreferenceState(it)
             }
         }
     }
 
-    suspend fun getFiltersByMethod(): FilterByMethodData {
-        return withContext(Dispatchers.IO) {
-            val get = preferences().getBoolean(FILTER_CATEGORY_METHOD_GET, true)
-            val put = preferences().getBoolean(FILTER_CATEGORY_METHOD_PUT, true)
-            val post = preferences().getBoolean(FILTER_CATEGORY_METHOD_POST, true)
-            FilterByMethodData(get, post, put)
-        }
+    private fun getFiltersByMethod(): FilterByMethodData {
+        val get = preferences().getBoolean(FILTER_CATEGORY_METHOD_GET, true)
+        val put = preferences().getBoolean(FILTER_CATEGORY_METHOD_PUT, true)
+        val post = preferences().getBoolean(FILTER_CATEGORY_METHOD_POST, true)
+        return FilterByMethodData(get, post, put)
+    }
+
+    private fun getFiltersByScheme(): FilterByScheme {
+        val https = preferences().getBoolean(FILTER_CATEGORY_SCHEME_HTTPS, true)
+        val http = preferences().getBoolean(FILTER_CATEGORY_SCHEME_HTTP, true)
+        return FilterByScheme(https = https, http = http)
     }
 
     private fun checkFilterPreferenceState(filtersData: FiltersData) {
-        if (haveFiltersByMethodChanged(filtersData.filterByMethodData)) {
+        if (haveFiltersByMethodChanged(filtersData.filterByMethodData) ||
+            haveFiltersBySchemeChanged(filtersData.filterByScheme)
+        ) {
             _filterPreferenceState.postValue(FiltersPreferenceState.CHANGED)
         } else {
             _filterPreferenceState.postValue(FiltersPreferenceState.DEFAULT)
@@ -80,6 +93,9 @@ internal object PreferencesManager {
 
     private fun haveFiltersByMethodChanged(filtersByMethod: FilterByMethodData): Boolean {
         return (!filtersByMethod.get || !filtersByMethod.put || !filtersByMethod.post)
+    }
+    private fun haveFiltersBySchemeChanged(filtersByScheme: FilterByScheme): Boolean {
+        return (!filtersByScheme.https || !filtersByScheme.http)
     }
 }
 

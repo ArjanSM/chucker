@@ -45,6 +45,7 @@ internal class FilterCategoryContentFragment : Fragment() {
                         ChuckerFilterCategorySchemeBinding
                             .inflate(inflator, viewGroup, false)
                     viewGroup.addView(chuckerFilterCategorySchemeBinding.root)
+                    populateFiltersBySchemeUI(chuckerFilterCategorySchemeBinding)
                 }
             }
         }
@@ -79,5 +80,24 @@ internal class FilterCategoryContentFragment : Fragment() {
                 viewModel.additionalFilters?.filterByMethodData?.put = isChecked
                 viewModel.saveFilters()
             }
+    }
+
+    private fun populateFiltersBySchemeUI(filterBySchemeBinding: ChuckerFilterCategorySchemeBinding) {
+        filterBySchemeBinding.chuckerFilterCategoryHttps.isChecked =
+            viewModel.additionalFilters?.filterByScheme?.https ?: true
+        filterBySchemeBinding.chuckerFilterCategoryHttp.isChecked =
+            viewModel.additionalFilters?.filterByScheme?.http ?: true
+        setupFiltersBySchemeClickListeners(filterBySchemeBinding)
+    }
+
+    private fun setupFiltersBySchemeClickListeners(filterBySchemeBinding: ChuckerFilterCategorySchemeBinding) {
+        filterBySchemeBinding.chuckerFilterCategoryHttps.setOnCheckedChangeListener { compoundButton, isChecked ->
+            viewModel.additionalFilters?.filterByScheme?.https = isChecked
+            viewModel.saveFilters()
+        }
+        filterBySchemeBinding.chuckerFilterCategoryHttp.setOnCheckedChangeListener { compoundButton, isChecked ->
+            viewModel.additionalFilters?.filterByScheme?.http = isChecked
+            viewModel.saveFilters()
+        }
     }
 }

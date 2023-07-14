@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chucker_filters_bottom_sheet_layout"
+    android:fitsSystemWindows="true"
     tools:context="com.chuckerteam.chucker.internal.ui.filter.FiltersFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -33,47 +35,59 @@
     </com.google.android.material.appbar.AppBarLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/chucker_octa_grid">
 
-        <LinearLayout
-            android:id="@+id/filter_category_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/chucker_doub_grid"
-            android:layout_marginStart="@dimen/chucker_doub_grid"
-            android:layout_marginEnd="@dimen/chucker_doub_grid"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/chucker_filter_category_fragment"
+            android:name="com.chuckerteam.chucker.internal.ui.filter.FilterCategoryFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/filter_cancel"
+            app:layout_constraintEnd_toStartOf="@+id/divider"
+            app:layout_constraintHorizontal_bias="0.097"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:layout="@layout/chucker_fragment_filter_category" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/chucker_filter_category_fragment"
-                android:name="com.chuckerteam.chucker.internal.ui.filter.FilterCategoryFragment"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.4" />
+        <View
+            android:id="@+id/divider"
+            android:layout_width="3dp"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.392"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="0dp" />
 
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/chucker_filter_category_content_fragment"
-                android:name="com.chuckerteam.chucker.internal.ui.filter.FilterCategoryContentFragment"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6" />
-        </LinearLayout>
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/chucker_filter_category_content_fragment"
+            android:name="com.chuckerteam.chucker.internal.ui.filter.FilterCategoryContentFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="@dimen/chucker_base_grid"
+            app:layout_constraintBottom_toBottomOf="@id/chucker_filter_category_fragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/divider"
+            app:layout_constraintTop_toTopOf="@id/chucker_filter_category_fragment"
+            tools:layout="@layout/chucker_fragment_filter_category_content" />
+
         <TextView
+            android:id="@+id/filter_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/filter_cancel"
+            android:layout_marginBottom="@dimen/chucker_doub_grid"
+            app:layout_constraintStart_toStartOf="@id/chucker_filter_category_fragment"
             android:text="@string/chucker_cancel"
-            app:layout_constraintTop_toBottomOf="@id/filter_category_layout"
-            app:layout_constraintStart_toStartOf="@id/filter_category_layout"/>
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <Button
+            android:id="@+id/filters_accept"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/filters_accept"
             android:text="@string/chucker_apply"
-            app:layout_constraintEnd_toEndOf="@id/filter_category_layout"
+            app:layout_constraintEnd_toEndOf="@id/chucker_filter_category_content_fragment"
             app:layout_constraintTop_toTopOf="@id/filter_cancel"
             app:layout_constraintBottom_toBottomOf="@id/filter_cancel" />
     </androidx.constraintlayout.widget.ConstraintLayout>

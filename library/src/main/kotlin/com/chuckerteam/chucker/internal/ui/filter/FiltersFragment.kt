@@ -1,12 +1,16 @@
 package com.chuckerteam.chucker.internal.ui.filter
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.fragment.app.activityViewModels
+import com.chuckerteam.chucker.R
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFiltersBinding
 import com.chuckerteam.chucker.internal.ui.MainViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 internal class FiltersFragment : BottomSheetDialogFragment() {
@@ -31,6 +35,13 @@ internal class FiltersFragment : BottomSheetDialogFragment() {
         filtersBinding.filtersAccept.setOnClickListener {
             this.dismiss()
             viewModel.saveFilters()
+        }
+
+        dialog?.setOnShowListener { dialogInterface ->
+            val bottomSheetDialog = dialogInterface as Dialog
+            bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.let {
+                BottomSheetBehavior.from(it).state = BottomSheetBehavior.STATE_EXPANDED
+            }
         }
     }
 }
