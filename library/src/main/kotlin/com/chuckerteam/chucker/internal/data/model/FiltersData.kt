@@ -8,17 +8,17 @@ internal const val FILTER_CATEGORY_SCHEME_HTTPS = "filter_by_category_scheme_htt
 internal const val FILTER_CATEGORY_SCHEME_HTTP = "filter_by_category_scheme_http"
 
 internal data class FiltersData(
-    val filterByMethodData: FilterByMethodData,
-    val filterByScheme: FilterByScheme
+    val filtersByMethodData: FiltersByMethodData,
+    val filtersByScheme: FiltersByScheme
 )
 
-internal data class FilterByMethodData(
+internal data class FiltersByMethodData(
     var get: Boolean = true,
     var post: Boolean = true,
     var put: Boolean = true
 )
 
-internal data class FilterByScheme(
+internal data class FiltersByScheme(
     var https: Boolean = true,
     var http: Boolean = true
 )

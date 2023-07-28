@@ -10,19 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFilterCategoryBinding
 import com.chuckerteam.chucker.internal.ui.MainViewModel
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethodCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterBySchemeCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 
 internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListener {
     private lateinit var filterCategoryViewBinding: ChuckerFragmentFilterCategoryBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var filterCategoryAdapter: FilterCategoryAdapter
     private val viewModel: MainViewModel by activityViewModels()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        filterCategoryAdapter = FilterCategoryAdapter(
-            listOf("Size", "Method", "Scheme"),
-            this
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,10 +37,21 @@ internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListe
         super.onViewCreated(view, savedInstanceState)
         recyclerView = filterCategoryViewBinding.filterCategoryRecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this.activity)
-        recyclerView.adapter = filterCategoryAdapter
+
+        viewModel.filterData.observe(viewLifecycleOwner) {
+            filterCategoryAdapter = FilterCategoryAdapter(
+                listOf(
+                    FilterByMethodCommand("Method", it.filterByMethod),
+                    FilterBySchemeCommand("Scheme", it.filterByScheme)
+                ),
+                this
+            )
+            recyclerView.adapter = filterCategoryAdapter
+        }
     }
 
-    override fun onFilterCategoryClick(filterCategory: String) {
-        viewModel.updateFilterCategory(filterCategory)
+    override fun onFilterCategoryClick(filterCommand: FilterCommand) {
+        viewModel.updateFilterCategory(filterCommand)
+        viewModel.updateLastClickedFilter(filterCommand)
     }
 }

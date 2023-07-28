@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import com.chuckerteam.chucker.R
 import com.chuckerteam.chucker.databinding.ChuckerFragmentFiltersBinding
 import com.chuckerteam.chucker.internal.ui.MainViewModel
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -17,6 +18,7 @@ internal class FiltersFragment : BottomSheetDialogFragment() {
 
     private lateinit var filtersBinding: ChuckerFragmentFiltersBinding
     private val viewModel: MainViewModel by activityViewModels()
+    private val filterCommands: MutableSet<FilterCommand> = mutableSetOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,10 +33,12 @@ internal class FiltersFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         filtersBinding.filterCancel.setOnClickListener {
             this.dismiss()
+            filterCommands.filter { it.hasChanged() }.forEach { it.undoFilterCommand() }
+            filterCommands.clear()
         }
         filtersBinding.filtersAccept.setOnClickListener {
             this.dismiss()
-            viewModel.saveFilters()
+            filterCommands.filter { it.hasChanged() }.forEach { viewModel.updateFilter(it) }
         }
 
         dialog?.setOnShowListener { dialogInterface ->
@@ -42,6 +46,9 @@ internal class FiltersFragment : BottomSheetDialogFragment() {
             bottomSheetDialog.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.let {
                 BottomSheetBehavior.from(it).state = BottomSheetBehavior.STATE_EXPANDED
             }
+        }
+        viewModel.lastClickedFilter.observe(this.viewLifecycleOwner) { filterCommand ->
+            filterCommands.add(filterCommand)
         }
     }
 }

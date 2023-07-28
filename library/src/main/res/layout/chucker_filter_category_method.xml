@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/chucker_filter_category_scheme_method"
+        android:id="@+id/chucker_filter_category_method"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/chucker_doub_grid"
@@ -22,7 +22,7 @@
         android:layout_marginStart="@dimen/chucker_doub_grid"
         android:layout_marginTop="@dimen/chucker_doub_grid"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chucker_filter_category_scheme_method" />
+        app:layout_constraintTop_toBottomOf="@id/chucker_filter_category_method" />
 
     <CheckBox
         android:id="@+id/chucker_filter_category_method_post"

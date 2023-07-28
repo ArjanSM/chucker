@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategoryBodyLineBinding
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 
 internal class FilterCategoryAdapter(
-    val filterCategories: List<String>,
+    private val filterCategories: List<FilterCommand>,
     private val onFilterCategoryClickListener: FilterCategoryItemClickListener?
 ) : RecyclerView.Adapter<FilterCategoryAdapter.FilterCategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterCategoryViewHolder {
@@ -21,27 +22,32 @@ internal class FilterCategoryAdapter(
     override fun getItemCount() = filterCategories.size
 
     override fun onBindViewHolder(holder: FilterCategoryViewHolder, position: Int) {
-        holder.setCategoryText(filterCategories[position])
+        holder.setFilterCommand(filterCategories[position])
     }
 
     inner class FilterCategoryViewHolder(
         private val filterCategoryViewBinding: ChuckerFilterCategoryBodyLineBinding
     ) : RecyclerView.ViewHolder(filterCategoryViewBinding.root) {
 
+        private lateinit var filterCommand: FilterCommand
+
         init {
             itemView.setOnClickListener {
-                onFilterCategoryClickListener?.onFilterCategoryClick(
-                    filterCategoryViewBinding.chuckerFilterCategoryLineTextview.text.toString()
-                )
+                onFilterCategoryClickListener?.onFilterCategoryClick(filterCommand)
             }
         }
 
-        fun setCategoryText(text: String) {
+        fun setFilterCommand(filterCommand: FilterCommand) {
+            this.filterCommand = filterCommand
+            setCategoryText(filterCommand.commandName)
+        }
+
+        private fun setCategoryText(text: String) {
             filterCategoryViewBinding.chuckerFilterCategoryLineTextview.text = text
         }
     }
 }
 
 internal interface FilterCategoryItemClickListener {
-    fun onFilterCategoryClick(filterCategory: String)
+    fun onFilterCategoryClick(filterCommand: FilterCommand)
 }
