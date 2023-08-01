@@ -47,6 +47,7 @@ internal class FilterCategoryFragment : Fragment(), FilterCategoryItemClickListe
                 this
             )
             recyclerView.adapter = filterCategoryAdapter
+            filterCategoryAdapter.notifyItemRangeChanged(0, 2)
         }
     }
 

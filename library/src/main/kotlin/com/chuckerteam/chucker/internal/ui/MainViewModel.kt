@@ -9,7 +9,6 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.chuckerteam.chucker.internal.data.entity.HttpTransaction
 import com.chuckerteam.chucker.internal.data.entity.HttpTransactionTuple
-import com.chuckerteam.chucker.internal.data.model.FiltersData
 import com.chuckerteam.chucker.internal.data.preferences.FiltersPreferenceState
 import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
 import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
@@ -22,9 +21,9 @@ internal class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            additionalFilters = PreferencesManager.getFiltersData()
             filtersState = PreferencesManager.filterPreferencesState
-            _filterData.value = PreferencesManager.getFilterData()
+            filterData = PreferencesManager.filterData
+            PreferencesManager.getFilterData()
         }
     }
 
@@ -32,8 +31,6 @@ internal class MainViewModel : ViewModel() {
     private val _filteredTransactions: MutableLiveData<List<HttpTransactionTuple>> = MutableLiveData()
     private val filteredTransactions: LiveData<List<HttpTransactionTuple>>
         get() = _filteredTransactions
-
-    private val filterPreferences: LiveData<FiltersData> = PreferencesManager.additionalFiltersPreferences
 
     private var searchFilteredTransactions: List<HttpTransactionTuple> = emptyList()
     private var _transactions: LiveData<List<HttpTransactionTuple>> = currentFilter.switchMap { searchQuery ->
@@ -65,8 +62,7 @@ internal class MainViewModel : ViewModel() {
                     containsFilteredMethod(it.method) && containsFilteredScheme(it.scheme)
                 }
             }
-            addSource(filterPreferences) {
-                additionalFilters = it
+            addSource(filterData) {
                 applyFilters()
             }
         }
@@ -78,14 +74,14 @@ internal class MainViewModel : ViewModel() {
         }
     }
     private fun containsFilteredMethod(method: String?): Boolean {
-        return (additionalFilters?.filtersByMethodData?.get == true && method == "GET") ||
-            (additionalFilters?.filtersByMethodData?.post == true && method == "POST") ||
-            (additionalFilters?.filtersByMethodData?.put == true && method == "PUT")
+        return (filterData.value?.filterByMethod?.get == true && method == "GET") ||
+            (filterData.value?.filterByMethod?.post == true && method == "POST") ||
+            (filterData.value?.filterByMethod?.put == true && method == "PUT")
     }
 
     private fun containsFilteredScheme(scheme: String?): Boolean {
-        return (additionalFilters?.filtersByScheme?.https == true && scheme == "https") ||
-            (additionalFilters?.filtersByScheme?.http == true && scheme == "http")
+        return (filterData.value?.filterByScheme?.https == true && scheme == "https") ||
+            (filterData.value?.filterByScheme?.http == true && scheme == "http")
     }
 
     suspend fun getAllTransactions(): List<HttpTransaction> = RepositoryProvider.transaction().getAllTransactions()
@@ -108,8 +104,6 @@ internal class MainViewModel : ViewModel() {
         filterCategory.value = latestFilterCommand
     }
 
-    var additionalFilters: FiltersData? = null
-
     private val _lastClickedFilter = MutableLiveData<FilterCommand>()
     val lastClickedFilter: LiveData<FilterCommand>
         get() = _lastClickedFilter
@@ -123,7 +117,5 @@ internal class MainViewModel : ViewModel() {
         }
     }
 
-    private val _filterData: MutableLiveData<AllFilters> = MutableLiveData()
-    val filterData: LiveData<AllFilters>
-        get() = _filterData
+    lateinit var filterData: LiveData<AllFilters>
 }
