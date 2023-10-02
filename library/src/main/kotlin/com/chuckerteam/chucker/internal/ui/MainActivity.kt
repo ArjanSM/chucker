@@ -32,7 +32,7 @@ import com.chuckerteam.chucker.internal.support.TransactionDetailsHarSharable
 import com.chuckerteam.chucker.internal.support.TransactionListDetailsSharable
 import com.chuckerteam.chucker.internal.support.shareAsFile
 import com.chuckerteam.chucker.internal.support.showDialog
-import com.chuckerteam.chucker.internal.ui.filter.FiltersFragment
+import com.chuckerteam.chucker.internal.ui.filter.FiltersBottomSheetFragment
 import com.chuckerteam.chucker.internal.ui.transaction.TransactionActivity
 import com.chuckerteam.chucker.internal.ui.transaction.TransactionAdapter
 import com.google.android.material.snackbar.Snackbar
@@ -159,7 +159,8 @@ internal class MainActivity :
                 true
             }
             R.id.filters -> {
-                FiltersFragment().show(supportFragmentManager, "FiltersFragment")
+                // FiltersFragmentOld().show(supportFragmentManager, "FiltersFragment")
+                FiltersBottomSheetFragment().show(supportFragmentManager, "filtersFragment")
                 true
             }
             R.id.share_text -> {

@@ -10,7 +10,7 @@ import com.chuckerteam.chucker.internal.ui.MainViewModel
 import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-internal class FiltersFragment : BottomSheetDialogFragment() {
+internal class FiltersFragmentOld : BottomSheetDialogFragment() {
 
     private lateinit var filtersBinding: ChuckerFragmentFiltersBinding
     private val viewModel: MainViewModel by activityViewModels()

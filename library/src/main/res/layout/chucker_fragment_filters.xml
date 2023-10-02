@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/chucker_filters_bottom_sheet_layout"
     android:fitsSystemWindows="true"
-    tools:context="com.chuckerteam.chucker.internal.ui.filter.FiltersFragment">
+    tools:context="com.chuckerteam.chucker.internal.ui.filter.FiltersFragmentOld">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/chucker_filter_fragment_app_bar"
@@ -40,7 +40,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/chucker_filter_category_fragment"
-            android:name="com.chuckerteam.chucker.internal.ui.filter.FilterCategoryFragment"
+            android:name="com.chuckerteam.chucker.internal.ui.filter.FiltersBottomSheetFragment"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/filter_cancel"
