@@ -14,15 +14,15 @@ internal class FilterByMethodCommand(
     override fun renderUI(viewBinding: ViewBinding) {
         val binding = viewBinding as ChuckerFilterCategoryMethodBinding
         val filterByMethodSettings = currentStateOfFilters as FilterByMethod
-        binding.chuckerFilterCategoryMethodGet.isChecked = filterByMethodSettings.get
-        binding.chuckerFilterCategoryMethodPost.isChecked = filterByMethodSettings.post
-        binding.chuckerFilterCategoryMethodPut.isChecked = filterByMethodSettings.put
+        binding.chipGet.isChecked = filterByMethodSettings.get
+        binding.chipPost.isChecked = filterByMethodSettings.post
+        binding.chipPut.isChecked = filterByMethodSettings.put
         setupFilterByMethodClickListeners(binding)
     }
 
     private fun setupFilterByMethodClickListeners(filterByMethodViewBinding: ChuckerFilterCategoryMethodBinding) {
         filterByMethodViewBinding
-            .chuckerFilterCategoryMethodGet
+            .chipGet
             .setOnCheckedChangeListener { _, isChecked ->
                 val filterByMethodSettings = currentStateOfFilters as FilterByMethod
                 currentStateOfFilters = FilterByMethod(
@@ -32,7 +32,7 @@ internal class FilterByMethodCommand(
                 )
             }
         filterByMethodViewBinding
-            .chuckerFilterCategoryMethodPost
+            .chipPost
             .setOnCheckedChangeListener { _, isChecked ->
                 val filterByMethodSettings = currentStateOfFilters as FilterByMethod
                 previousStateOfFilters = currentStateOfFilters
@@ -43,7 +43,7 @@ internal class FilterByMethodCommand(
                 )
             }
         filterByMethodViewBinding
-            .chuckerFilterCategoryMethodPut
+            .chipPut
             .setOnCheckedChangeListener { compoundButton, isChecked ->
                 val filterByMethodSettings = currentStateOfFilters as FilterByMethod
                 previousStateOfFilters = currentStateOfFilters

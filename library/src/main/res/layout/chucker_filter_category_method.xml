@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -14,7 +15,52 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <CheckBox
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_filter_by_method"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_method"
+        tools:layout_editor_absoluteX="32dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_get"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/chucker_method_get"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_method"
+            app:singleSelection="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chucker_method_post"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            app:layout_constraintBottom_toBottomOf="@+id/chip_get"
+            app:layout_constraintEnd_toStartOf="@+id/chip_put"
+            app:layout_constraintStart_toEndOf="@+id/chip_get"
+            app:layout_constraintTop_toTopOf="@+id/chip_get"
+            app:singleSelection="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_put"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chucker_method_put"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            app:layout_constraintBottom_toBottomOf="@+id/chip_post"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/chip_post"
+            app:layout_constraintVertical_bias="0.0"
+            app:singleSelection="true" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!--<CheckBox
         android:id="@+id/chucker_filter_category_method_get"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,5 +88,5 @@
         android:text="@string/chucker_method_put"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/chucker_filter_category_method_post"
-        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_method_post" />
+        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_method_post" /> -->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:text="@string/chucker_scheme" />
 
-    <CheckBox
+    <!--<CheckBox
         android:id="@+id/chucker_filter_category_http"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,14 +30,45 @@
         android:layout_height="wrap_content"
         android:text="@string/chucker_https"
         app:layout_constraintStart_toStartOf="@+id/chucker_filter_category_http"
-        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_http" />
+        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_http" />-->
+
+    <com.google.android.material.chip.ChipGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/filterBySchemeChipGroup"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/chucker_filter_category_scheme_divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_scheme_label">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_http"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chucker_http"
+            android:layout_marginStart="@dimen/chucker_doub_grid"
+            app:layout_constraintBottom_toTopOf="@+id/chucker_filter_category_scheme_divider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chucker_filter_category_scheme_label" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_https"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/chucker_https"
+            app:layout_constraintBottom_toBottomOf="@+id/chip_http"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/chip_http"
+            app:layout_constraintTop_toTopOf="@+id/chip_http" />
+    </com.google.android.material.chip.ChipGroup>
 
     <View
         android:id="@+id/chucker_filter_category_scheme_divider"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chucker_filter_category_https" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

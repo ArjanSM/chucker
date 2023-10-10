@@ -10,9 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chuckerteam.chucker.R
 import com.chuckerteam.chucker.databinding.ChuckerFragmentBottomSheetBinding
 import com.chuckerteam.chucker.internal.ui.MainViewModel
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-public class FiltersBottomSheetFragment : BottomSheetDialogFragment() {
+public class FiltersBottomSheetFragment :
+    BottomSheetDialogFragment(),
+    AdvanceFilterCategoryItemClickListener {
     private lateinit var filterCategoryViewBinding: ChuckerFragmentBottomSheetBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var filterCategoryAdapter: AdvancedFiltersRecyclerViewAdapter
@@ -34,12 +37,23 @@ public class FiltersBottomSheetFragment : BottomSheetDialogFragment() {
         viewModel.filterData.observe(viewLifecycleOwner) {
             filterCategoryAdapter = AdvancedFiltersRecyclerViewAdapter(
                 listOf(
-                    FilterBySchemeCategory(R.layout.chucker_filter_category_scheme, it.filterByScheme),
-                    FilterByVerbCategory(R.layout.chucker_filter_category_method, it.filterByMethod)
+                    FilterBySchemeCategory(R.layout.chucker_filter_category_scheme, it.filterByScheme, this),
+                    FilterByVerbCategory(R.layout.chucker_filter_category_method, it.filterByMethod, this)
                 )
             )
             recyclerView.adapter = filterCategoryAdapter
             filterCategoryAdapter.notifyItemRangeChanged(0, 2)
         }
+        filterCategoryViewBinding.chuckerFilterApplyButton.setOnClickListener {
+            this@FiltersBottomSheetFragment.dismiss()
+        }
+        filterCategoryViewBinding.chuckerFilterCancelTextview.setOnClickListener {
+            this@FiltersBottomSheetFragment.dismiss()
+        }
+    }
+
+    override fun onFilterCategoryClick(filterCommand: FilterCommand) {
+        viewModel.updateFilter(filterCommand)
+        viewModel.updateLastClickedFilter(filterCommand)
     }
 }

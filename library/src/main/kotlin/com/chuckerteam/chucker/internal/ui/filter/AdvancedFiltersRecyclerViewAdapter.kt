@@ -1,17 +1,23 @@
 package com.chuckerteam.chucker.internal.ui.filter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.CompoundButton.OnCheckedChangeListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewbinding.ViewBinding
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategoryMethodBinding
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategorySchemeBinding
 import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethod
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethodCommand
 import com.chuckerteam.chucker.internal.ui.filter.command.FilterByScheme
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterBySchemeCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
 
-internal class AdvancedFiltersRecyclerViewAdapter(private val viewConfigs: List<FilterCategoryConfig>) :
+internal class AdvancedFiltersRecyclerViewAdapter(
+    private val viewConfigs: List<FilterCategoryConfig>
+) :
     Adapter<AdvancedFiltersRecyclerViewAdapter.ViewHolder>() {
     override fun getItemViewType(position: Int): Int {
         return viewConfigs[position].layout
@@ -30,6 +36,7 @@ internal class AdvancedFiltersRecyclerViewAdapter(private val viewConfigs: List<
     }
 
     inner class ViewHolder(private val viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root) {
+
         fun populateUI(viewConfig: FilterCategoryConfig) {
             viewConfig.bindViewState(viewBinding)
         }
@@ -45,42 +52,93 @@ internal abstract class FilterCategoryConfig(val layout: Int) {
     abstract fun bindViewState(viewBinding: ViewBinding)
 }
 
-internal class FilterBySchemeCategory(layout: Int, private val filterByScheme: FilterByScheme) :
-    FilterCategoryConfig(layout) {
+internal class FilterBySchemeCategory(
+    layout: Int,
+    filterByScheme: FilterByScheme,
+    val advanceFilterCategoryItemClickListener: AdvanceFilterCategoryItemClickListener
+) : FilterCategoryConfig(layout), OnCheckedChangeListener {
+    private var filterBySchemeSelections = filterByScheme
+    private lateinit var viewBinding: ChuckerFilterCategorySchemeBinding
     override fun inflateViewBinding(parent: ViewGroup): ViewBinding {
         return ChuckerFilterCategorySchemeBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
-        )
+        ).also { this.viewBinding = it }
     }
 
     override fun bindViewState(viewBinding: ViewBinding) {
         val layout = (viewBinding as ChuckerFilterCategorySchemeBinding)
-        layout.chuckerFilterCategoryHttp.visibility =
-            if (filterByScheme.http) View.VISIBLE else View.INVISIBLE
-        layout.chuckerFilterCategoryHttps.visibility =
-            if (filterByScheme.https) View.VISIBLE else View.INVISIBLE
+        layout.chipHttp.isChecked = filterBySchemeSelections.http
+        layout.chipHttps.isChecked = filterBySchemeSelections.https
+        layout.chipHttp.setOnCheckedChangeListener(this)
+        layout.chipHttps.setOnCheckedChangeListener(this)
+    }
+
+    override fun onCheckedChanged(chip: CompoundButton?, p1: Boolean) {
+        when (chip?.id) {
+            viewBinding.chipHttp.id -> {
+                filterBySchemeSelections = FilterByScheme(p1, filterBySchemeSelections.https)
+            }
+            viewBinding.chipHttps.id -> {
+                filterBySchemeSelections = FilterByScheme(filterBySchemeSelections.http, p1)
+            }
+        }
+        advanceFilterCategoryItemClickListener.onFilterCategoryClick(
+            FilterBySchemeCommand("Scheme", filterBySchemeSelections)
+        )
     }
 }
 
-internal class FilterByVerbCategory(layout: Int, private val filterByMethod: FilterByMethod) :
-    FilterCategoryConfig(layout) {
+internal class FilterByVerbCategory(
+    layout: Int,
+    filterByMethod: FilterByMethod,
+    private val advanceFilterCategoryItemClickListener: AdvanceFilterCategoryItemClickListener
+) :
+    FilterCategoryConfig(layout), OnCheckedChangeListener {
+    private var filterByVerbSelections = filterByMethod
+
+    private lateinit var viewBinding: ChuckerFilterCategoryMethodBinding
     override fun inflateViewBinding(parent: ViewGroup): ViewBinding {
         return ChuckerFilterCategoryMethodBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
-        )
+        ).also { viewBinding = it }
     }
 
     override fun bindViewState(viewBinding: ViewBinding) {
         val layout = (viewBinding as ChuckerFilterCategoryMethodBinding)
-        layout.chuckerFilterCategoryMethodGet.visibility =
-            if (filterByMethod.get) View.VISIBLE else View.INVISIBLE
-        layout.chuckerFilterCategoryMethodPost.visibility =
-            if (filterByMethod.post) View.VISIBLE else View.INVISIBLE
-        layout.chuckerFilterCategoryMethodPut.visibility =
-            if (filterByMethod.put) View.VISIBLE else View.INVISIBLE
+        layout.chipGet.isChecked = filterByVerbSelections.get
+        layout.chipPost.isChecked = filterByVerbSelections.post
+        layout.chipPut.isChecked = filterByVerbSelections.put
+        layout.chipPost.setOnCheckedChangeListener(this)
+        layout.chipPut.setOnCheckedChangeListener(this)
+        layout.chipGet.setOnCheckedChangeListener(this)
     }
+
+    override fun onCheckedChanged(chip: CompoundButton?, p1: Boolean) {
+        when (chip?.id) {
+            viewBinding.chipGet.id -> {
+                filterByVerbSelections = FilterByMethod(p1, filterByVerbSelections.post, filterByVerbSelections.put)
+                viewBinding.chipGet.isChecked = p1
+            }
+            viewBinding.chipPost.id -> {
+                filterByVerbSelections = FilterByMethod(filterByVerbSelections.get, p1, filterByVerbSelections.put)
+                viewBinding.chipPost.isChecked = p1
+            }
+            viewBinding.chipPut.id -> {
+                filterByVerbSelections = FilterByMethod(filterByVerbSelections.get, filterByVerbSelections.post, p1)
+                viewBinding.chipPut.isChecked = p1
+            }
+        }
+        advanceFilterCategoryItemClickListener
+            .onFilterCategoryClick(
+                FilterByMethodCommand("Method", filterByVerbSelections)
+            )
+    }
+}
+
+internal interface AdvanceFilterCategoryItemClickListener {
+    fun onFilterCategoryClick(filterCommand: FilterCommand)
 }

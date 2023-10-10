@@ -20,13 +20,13 @@ internal class FilterBySchemeCommand(
     override fun renderUI(viewBinding: ViewBinding) {
         val binding = viewBinding as ChuckerFilterCategorySchemeBinding
         val filterBySchemeSettings = currentStateOfFilters as FilterByScheme
-        binding.chuckerFilterCategoryHttp.isChecked = filterBySchemeSettings.http
-        binding.chuckerFilterCategoryHttps.isChecked = filterBySchemeSettings.https
+        binding.chipHttp.isChecked = filterBySchemeSettings.http
+        binding.chipHttps.isChecked = filterBySchemeSettings.https
         setupFilterBySchemeClickListeners(binding)
     }
 
     private fun setupFilterBySchemeClickListeners(viewBinding: ChuckerFilterCategorySchemeBinding) {
-        viewBinding.chuckerFilterCategoryHttp.setOnCheckedChangeListener { _, isChecked ->
+        viewBinding.chipHttp.setOnCheckedChangeListener { _, isChecked ->
             val filterBySchemeSettings = currentStateOfFilters as FilterByScheme
             previousStateOfFilters = currentStateOfFilters
             currentStateOfFilters = FilterByScheme(
@@ -35,7 +35,7 @@ internal class FilterBySchemeCommand(
             )
         }
 
-        viewBinding.chuckerFilterCategoryHttps.setOnCheckedChangeListener { _, isChecked ->
+        viewBinding.chipHttps.setOnCheckedChangeListener { _, isChecked ->
             val filterBySchemeSettings = currentStateOfFilters as FilterByScheme
             previousStateOfFilters = currentStateOfFilters
             currentStateOfFilters = FilterByScheme(
