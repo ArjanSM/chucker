@@ -78,10 +78,10 @@ internal class FilterBySchemeCategory(
     override fun onCheckedChanged(chip: CompoundButton?, p1: Boolean) {
         when (chip?.id) {
             viewBinding.chipHttp.id -> {
-                filterBySchemeSelections = FilterByScheme(p1, filterBySchemeSelections.https)
+                filterBySchemeSelections = FilterByScheme(http = p1, https = filterBySchemeSelections.https)
             }
             viewBinding.chipHttps.id -> {
-                filterBySchemeSelections = FilterByScheme(filterBySchemeSelections.http, p1)
+                filterBySchemeSelections = FilterByScheme(http = filterBySchemeSelections.http, https = p1)
             }
         }
         advanceFilterCategoryItemClickListener.onFilterCategoryClick(

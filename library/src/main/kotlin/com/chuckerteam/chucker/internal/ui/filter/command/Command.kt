@@ -22,12 +22,20 @@ public abstract class FilterCommand(public open val commandName: String, current
 }
 
 public sealed class FilterData
-internal class FilterByScheme(val https: Boolean = true, val http: Boolean = true) : FilterData()
+internal class FilterByScheme(val https: Boolean = true, val http: Boolean = true) : FilterData() {
+    fun toFilterCommand(): FilterCommand {
+        return FilterBySchemeCommand("Scheme", this)
+    }
+}
 internal class FilterByMethod(
     val get: Boolean = true,
     val post: Boolean = true,
     val put: Boolean = true
-) : FilterData()
+) : FilterData() {
+    fun toFilterCommand(): FilterCommand {
+        return FilterByMethodCommand("Method", this)
+    }
+}
 
 internal class AllFilters(val filterByScheme: FilterByScheme, val filterByMethod: FilterByMethod) :
     FilterData()

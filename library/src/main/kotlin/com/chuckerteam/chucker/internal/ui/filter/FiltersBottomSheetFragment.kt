@@ -20,6 +20,8 @@ public class FiltersBottomSheetFragment :
     private lateinit var recyclerView: RecyclerView
     private lateinit var filterCategoryAdapter: AdvancedFiltersRecyclerViewAdapter
     private val viewModel: MainViewModel by activityViewModels()
+    private val currentSelectedFilters = mutableSetOf<FilterCommand>()
+    private val previousSelectedFilters = mutableSetOf<FilterCommand>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,6 +37,9 @@ public class FiltersBottomSheetFragment :
         recyclerView = filterCategoryViewBinding.chuckerFilterRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(this.activity)
         viewModel.filterData.observe(viewLifecycleOwner) {
+            previousSelectedFilters.add(it.filterByMethod.toFilterCommand())
+            previousSelectedFilters.add(it.filterByScheme.toFilterCommand())
+
             filterCategoryAdapter = AdvancedFiltersRecyclerViewAdapter(
                 listOf(
                     FilterBySchemeCategory(R.layout.chucker_filter_category_scheme, it.filterByScheme, this),
@@ -45,15 +50,20 @@ public class FiltersBottomSheetFragment :
             filterCategoryAdapter.notifyItemRangeChanged(0, 2)
         }
         filterCategoryViewBinding.chuckerFilterApplyButton.setOnClickListener {
+            previousSelectedFilters.clear()
+            currentSelectedFilters.forEach {
+                viewModel.updateFilter(it)
+                previousSelectedFilters.add(it)
+            }
             this@FiltersBottomSheetFragment.dismiss()
         }
         filterCategoryViewBinding.chuckerFilterCancelTextview.setOnClickListener {
+            this.currentSelectedFilters.clear()
             this@FiltersBottomSheetFragment.dismiss()
         }
     }
 
     override fun onFilterCategoryClick(filterCommand: FilterCommand) {
-        viewModel.updateFilter(filterCommand)
-        viewModel.updateLastClickedFilter(filterCommand)
+        currentSelectedFilters.add(filterCommand)
     }
 }
