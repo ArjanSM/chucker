@@ -9,14 +9,14 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.viewbinding.ViewBinding
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategoryMethodBinding
 import com.chuckerteam.chucker.databinding.ChuckerFilterCategorySchemeBinding
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterAction
 import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethod
-import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethodCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterByMethodAction
 import com.chuckerteam.chucker.internal.ui.filter.command.FilterByScheme
-import com.chuckerteam.chucker.internal.ui.filter.command.FilterBySchemeCommand
-import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterBySchemeAction
 
 internal class AdvancedFiltersRecyclerViewAdapter(
-    private val viewConfigs: List<FilterCategoryConfig>
+    private val viewConfigs: List<FilterViewConfig>
 ) :
     Adapter<AdvancedFiltersRecyclerViewAdapter.ViewHolder>() {
     override fun getItemViewType(position: Int): Int {
@@ -37,7 +37,7 @@ internal class AdvancedFiltersRecyclerViewAdapter(
 
     inner class ViewHolder(private val viewBinding: ViewBinding) : RecyclerView.ViewHolder(viewBinding.root) {
 
-        fun populateUI(viewConfig: FilterCategoryConfig) {
+        fun populateUI(viewConfig: FilterViewConfig) {
             viewConfig.bindViewState(viewBinding)
         }
     }
@@ -47,16 +47,16 @@ internal class AdvancedFiltersRecyclerViewAdapter(
     }
 }
 
-internal abstract class FilterCategoryConfig(val layout: Int) {
+internal abstract class FilterViewConfig(val layout: Int) {
     abstract fun inflateViewBinding(parent: ViewGroup): ViewBinding
     abstract fun bindViewState(viewBinding: ViewBinding)
 }
 
-internal class FilterBySchemeCategory(
+internal class FilterBySchemeView(
     layout: Int,
     filterByScheme: FilterByScheme,
-    val advanceFilterCategoryItemClickListener: AdvanceFilterCategoryItemClickListener
-) : FilterCategoryConfig(layout), OnCheckedChangeListener {
+    private val advanceFilterCategoryItemClickListener: AdvanceFilterCategoryItemClickListener
+) : FilterViewConfig(layout), OnCheckedChangeListener {
     private var filterBySchemeSelections = filterByScheme
     private lateinit var viewBinding: ChuckerFilterCategorySchemeBinding
     override fun inflateViewBinding(parent: ViewGroup): ViewBinding {
@@ -85,17 +85,17 @@ internal class FilterBySchemeCategory(
             }
         }
         advanceFilterCategoryItemClickListener.onFilterCategoryClick(
-            FilterBySchemeCommand("Scheme", filterBySchemeSelections)
+            FilterBySchemeAction("Scheme", filterBySchemeSelections)
         )
     }
 }
 
-internal class FilterByVerbCategory(
+internal class FilterByVerbView(
     layout: Int,
     filterByMethod: FilterByMethod,
     private val advanceFilterCategoryItemClickListener: AdvanceFilterCategoryItemClickListener
 ) :
-    FilterCategoryConfig(layout), OnCheckedChangeListener {
+    FilterViewConfig(layout), OnCheckedChangeListener {
     private var filterByVerbSelections = filterByMethod
 
     private lateinit var viewBinding: ChuckerFilterCategoryMethodBinding
@@ -134,11 +134,11 @@ internal class FilterByVerbCategory(
         }
         advanceFilterCategoryItemClickListener
             .onFilterCategoryClick(
-                FilterByMethodCommand("Method", filterByVerbSelections)
+                FilterByMethodAction("Method", filterByVerbSelections)
             )
     }
 }
 
 internal interface AdvanceFilterCategoryItemClickListener {
-    fun onFilterCategoryClick(filterCommand: FilterCommand)
+    fun onFilterCategoryClick(filterCommand: FilterAction)
 }

@@ -14,7 +14,7 @@ import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
 import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import com.chuckerteam.chucker.internal.support.NotificationHelper
 import com.chuckerteam.chucker.internal.ui.filter.command.AllFilters
-import com.chuckerteam.chucker.internal.ui.filter.command.FilterCommand
+import com.chuckerteam.chucker.internal.ui.filter.command.FilterAction
 import kotlinx.coroutines.launch
 
 internal class MainViewModel : ViewModel() {
@@ -97,23 +97,9 @@ internal class MainViewModel : ViewModel() {
         NotificationHelper.clearBuffer()
     }
 
-    private val filterCategory = MutableLiveData<FilterCommand>()
-    val currentFilterCategory: LiveData<FilterCommand>
-        get() = filterCategory
-    fun updateFilterCategory(latestFilterCommand: FilterCommand) {
-        filterCategory.value = latestFilterCommand
-    }
-
-    private val _lastClickedFilter = MutableLiveData<FilterCommand>()
-    val lastClickedFilter: LiveData<FilterCommand>
-        get() = _lastClickedFilter
-    fun updateLastClickedFilter(filterCommand: FilterCommand) {
-        _lastClickedFilter.value = filterCommand
-    }
-
-    fun updateFilter(filterCommand: FilterCommand) {
+    fun updateFilter(filterAction: FilterAction) {
         viewModelScope.launch {
-            filterCommand.executeCommand()
+            filterAction.applyFilterAction()
         }
     }
 
