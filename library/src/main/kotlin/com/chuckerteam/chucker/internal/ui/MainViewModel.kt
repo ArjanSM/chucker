@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.chuckerteam.chucker.internal.data.entity.HttpTransaction
 import com.chuckerteam.chucker.internal.data.entity.HttpTransactionTuple
 import com.chuckerteam.chucker.internal.data.preferences.FiltersPreferenceState
-import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
 import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import com.chuckerteam.chucker.internal.support.NotificationHelper
 import com.chuckerteam.chucker.internal.ui.filter.command.AllFilters
@@ -21,9 +20,9 @@ internal class MainViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            filtersState = PreferencesManager.filterPreferencesState
-            filterData = PreferencesManager.filterData
-            PreferencesManager.getFilterData()
+            filtersState = RepositoryProvider.preferences().filterPreferencesState
+            filterData = RepositoryProvider.preferences().filterData
+            RepositoryProvider.preferences().getFilterData()
         }
     }
 
@@ -51,9 +50,9 @@ internal class MainViewModel : ViewModel() {
 
     val finalFilteredTransactions: MediatorLiveData<List<HttpTransactionTuple>> =
         MediatorLiveData<List<HttpTransactionTuple>>().apply {
-            addSource(_transactions) { searchFilteredTransactions ->
+            addSource(_transactions) { textFilteredTransactions ->
                 this@MainViewModel.searchFilteredTransactions = mutableListOf<HttpTransactionTuple>().apply {
-                    addAll(searchFilteredTransactions)
+                    addAll(textFilteredTransactions)
                 }
                 applyFilters()
             }

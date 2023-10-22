@@ -1,6 +1,6 @@
 package com.chuckerteam.chucker.internal.ui.filter.command
 
-import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
+import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -11,7 +11,7 @@ internal class FilterBySchemeAction(
 
     override suspend fun applyFilterAction() {
         withContext(Dispatchers.IO) {
-            PreferencesManager.applyFilterByScheme(currentStateOfFilters as FilterByScheme)
+            RepositoryProvider.preferences().applyFilterByScheme(currentStateOfFilters as FilterByScheme)
         }
     }
 }

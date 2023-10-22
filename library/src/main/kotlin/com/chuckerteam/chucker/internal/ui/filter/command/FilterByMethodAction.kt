@@ -1,6 +1,6 @@
 package com.chuckerteam.chucker.internal.ui.filter.command
 
-import com.chuckerteam.chucker.internal.data.preferences.PreferencesManager
+import com.chuckerteam.chucker.internal.data.repository.RepositoryProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -12,7 +12,7 @@ internal class FilterByMethodAction(
     override suspend fun applyFilterAction() {
         withContext(Dispatchers.IO) {
             val currentFilterByMethod = (currentStateOfFilters as FilterByMethod)
-            PreferencesManager.applyFilterByMethod(currentFilterByMethod)
+            RepositoryProvider.preferences().applyFilterByMethod(currentFilterByMethod)
         }
     }
 }

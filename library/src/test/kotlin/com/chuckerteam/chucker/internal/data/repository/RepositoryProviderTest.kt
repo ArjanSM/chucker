@@ -51,4 +51,11 @@ internal class RepositoryProviderTest {
         val two = RepositoryProvider.transaction()
         assertThat(one).isSameInstanceAs(two)
     }
+
+    @Test
+    fun `uninitialized PreferencesRepository fails with IllegalStateException`() {
+        assertThrows<IllegalStateException> {
+            RepositoryProvider.preferences()
+        }
+    }
 }

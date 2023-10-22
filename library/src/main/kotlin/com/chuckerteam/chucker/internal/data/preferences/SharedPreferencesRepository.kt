@@ -1,11 +1,8 @@
 package com.chuckerteam.chucker.internal.data.preferences
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.chuckerteam.chucker.internal.data.model.FILTERS_PREF
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_GET
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_POST
 import com.chuckerteam.chucker.internal.data.model.FILTER_CATEGORY_METHOD_PUT
@@ -17,9 +14,7 @@ import com.chuckerteam.chucker.internal.ui.filter.command.FilterByScheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-internal object PreferencesManager {
-    private var sharedPreferences: SharedPreferences? = null
-
+internal class SharedPreferencesRepository(private val sharedPreferences: SharedPreferences) {
     private val _filterPreferenceState: MutableLiveData<FiltersPreferenceState> =
         MutableLiveData()
 
@@ -30,23 +25,9 @@ internal object PreferencesManager {
     val filterData: LiveData<AllFilters>
         get() = _filterData
 
-    suspend fun initialize(applicationContext: Context) {
-        withContext(Dispatchers.IO) {
-            if (sharedPreferences == null) {
-                sharedPreferences = applicationContext.getSharedPreferences(FILTERS_PREF, MODE_PRIVATE)
-            }
-        }
-    }
-
-    private fun preferences(): SharedPreferences {
-        return checkNotNull(sharedPreferences) {
-            "You cannot access sharedPreferences if you don't initialize it"
-        }
-    }
-
     suspend fun applyFilterByMethod(filterByMethod: FilterByMethod) {
         withContext(Dispatchers.IO) {
-            preferences().edit().apply {
+            sharedPreferences.edit().apply {
                 putBoolean(FILTER_CATEGORY_METHOD_GET, filterByMethod.get)
                 putBoolean(FILTER_CATEGORY_METHOD_POST, filterByMethod.post)
                 putBoolean(FILTER_CATEGORY_METHOD_PUT, filterByMethod.put)
@@ -58,7 +39,7 @@ internal object PreferencesManager {
     }
     suspend fun applyFilterByScheme(filterByScheme: FilterByScheme) {
         withContext(Dispatchers.IO) {
-            preferences().edit().apply {
+            sharedPreferences.edit().apply {
                 putBoolean(FILTER_CATEGORY_SCHEME_HTTP, filterByScheme.http)
                 putBoolean(FILTER_CATEGORY_SCHEME_HTTPS, filterByScheme.https)
                 this.apply()
@@ -81,15 +62,15 @@ internal object PreferencesManager {
     }
 
     private fun getFilterByMethod(): FilterByMethod {
-        val get = preferences().getBoolean(FILTER_CATEGORY_METHOD_GET, true)
-        val put = preferences().getBoolean(FILTER_CATEGORY_METHOD_PUT, true)
-        val post = preferences().getBoolean(FILTER_CATEGORY_METHOD_POST, true)
+        val get = sharedPreferences.getBoolean(FILTER_CATEGORY_METHOD_GET, true)
+        val put = sharedPreferences.getBoolean(FILTER_CATEGORY_METHOD_PUT, true)
+        val post = sharedPreferences.getBoolean(FILTER_CATEGORY_METHOD_POST, true)
         return FilterByMethod(get, post, put)
     }
 
     private fun getFilterByScheme(): FilterByScheme {
-        val https = preferences().getBoolean(FILTER_CATEGORY_SCHEME_HTTPS, true)
-        val http = preferences().getBoolean(FILTER_CATEGORY_SCHEME_HTTP, true)
+        val https = sharedPreferences.getBoolean(FILTER_CATEGORY_SCHEME_HTTPS, true)
+        val http = sharedPreferences.getBoolean(FILTER_CATEGORY_SCHEME_HTTP, true)
         return FilterByScheme(https = https, http = http)
     }
 
